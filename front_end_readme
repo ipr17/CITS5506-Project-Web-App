@@ -1,0 +1,62 @@
+// Functions
+- Timer function (button to start and display)
+- Notifications 24 hours after clothes were hung out 
+- Live camera feed 
+- Notifications for upcoming weather events 
+- Manual override button 
+- Current status display (cover up or down)
+
++------------------------------------------------------------+
+| 🧺 Smart Clothes Drying Rack Dashboard                     |
++------------------------------------------------------------+
+| 📸 Live Camera Feed:                                       |
+|   [🔴 Live Stream Video Window Here]                       |
+|   - Source: Raspberry Pi camera                            |
+|   - Route: /video                                          |
++------------------------------------------------------------+
+| ⏲️ Timer Function                                          |
+|   [ Start Timer ]                                          |
+|   Elapsed Time: 01:32:15                                   |
+|   - Function: Starts when clothes are hung out             |
+|   - Backend: POST /api/timer/start                         |
+|   - Display updates every second via JavaScript            |
++------------------------------------------------------------+
+| 🛎️ Notifications                                           |
+|   • Clothes have been drying for over 24 hours!           |
+|   • Upcoming rain expected in 3 hours ☔                  |
+|   - Function: Automatic alerts from backend                |
+|   - Backend: GET /api/notifications                        |
+|   - Conditions: 24h timer / weather API                    |
++------------------------------------------------------------+
+| 🧭 Manual Control                                          |
+|   [⬆️ Cover Up]   [⬇️ Cover Down]   [🛠 Manual Override]     |
+|   - Function: Manually control rack position               |
+|   - Backend: POST /api/control                             |
+|     { "command": "up" | "down" | "override" }              |
++------------------------------------------------------------+
+| 📊 Rack Status                                             |
+|   Status: ⬇️ Cover is DOWN                                 |
+|   Humidity: 68%                                            |
+|   Temperature: 24°C                                        |
+|   Rain Detected: No                                        |
+|   Light Level: 450 lx                                      |
+|   - Backend: GET /api/status                               |
+|   - Data from sensors via Raspberry Pi                     |
++------------------------------------------------------------+
+
+
+
+
+
+//  Backend & IoT Logic
+
+//  Frontend & UI 
+
+UI Design Principles
+Theme:  blue & white color (maybe) clean, fresh loo
+Layout: Single-column, mobile-responsive
+Technology:
+Pure HTML, CSS, and JavaScript
+Performance: fast-loading for Raspberry Pi hosting.
+
+
