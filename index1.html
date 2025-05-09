@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothes Rack</title>
+    <style>
+        :root {
+            --cream: #f5f5dc;
+            --warm-gray: #8b7355;
+            --light-cream: #fffaf0;
+            --accent: #d2b48c;
+            --text: #4a4a4a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body {
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .title {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--warm-gray);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 500;
+        }
+
+        .section {
+            background: var(--light-cream);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--accent);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section h2 {
+            color: var(--warm-gray);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .camera-feed {
+            width: 100%;
+            height: 300px;
+            border-radius: 4px;
+            border: 1px solid var(--accent);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            flex: 1;
+        }
+
+        .status-item {
+            background: var(--cream);
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid var(--accent);
+        }
+
+        .status-item h3 {
+            color: var(--warm-gray);
+            margin-bottom: 12px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .status-item p {
+            font-size: 1.2em;
+            font-weight: 300;
+        }
+
+        .weather-symbol {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .button, .reset-timer {
+            background: var(--warm-gray);
+            color: var(--light-cream);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            height: 48px;
+        }
+
+        .reset-timer {
+            background: var(--accent);
+        }
+
+        .timer-display {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: var(--warm-gray);
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .notifications-bar {
+            grid-column: 1 / -1;
+            background: var(--light-cream);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .notification {
+            background: var(--accent);
+            color: var(--light-cream);
+            padding: 15px 30px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+            position: relative;
+            padding-right: 40px;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .weather-alert {
+            background: var(--accent);
+            color: var(--light-cream);
+            padding: 15px 30px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.1em;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .close-notification {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--light-cream);
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .emergency-button {
+            background: #e6a23c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            .title {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+
+            .section {
+                height: auto;
+            }
+
+            .status-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .notification, .weather-alert {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Smart Clothes Rack Dashboard</h1>
+
+        <div class="section">
+            <h2>📸 Live Camera Feed</h2>
+            <video class="camera-feed" autoplay muted loop>
+                <source src="/video_feed" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="section">
+            <h2>📊 Current Status</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <h3>Cover State</h3>
+                    <p id="coverState">Extended</p>
+                </div>
+                <div class="status-item">
+                    <h3>Sunlight</h3>
+                    <p id="sunlight">-- lux</p>
+                </div>
+                <div class="status-item">
+                    <h3>Rain Detection</h3>
+                    <p id="rainStatus">No Rain</p>
+                </div>
+                <div class="status-item">
+                    <h3>Weather</h3>
+                    <div class="weather-symbol" id="weatherSymbol">☀️</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⏲️ Drying Timer</h2>
+            <div class="timer-container">
+                <div class="timer-grid">
+                    <button class="button" id="extendCover">Extend Cover</button>
+                    <button class="button" id="retractCover">Retract Cover</button>
+                    <button class="button" id="startTimer">Start Timer</button>
+                    <button class="reset-timer" id="resetTimer">Reset</button>
+                </div>
+                <div class="timer-display" id="timer">00:00:00</div>
+                <button class="emergency-button" id="emergencyCover">
+                    🛑 Manual Close
+                </button>
+            </div>
+        </div>
+
+        <div class="notifications-bar">
+            <h2>🔔 Notifications</h2>
+            <div class="weather-alert" id="weatherAlert">
+                No rain expected in the next 12 hours ☀️
+            </div>
+            <div class="notification" id="dryingAlert">
+                Clothes have been drying for over 24 hours!
+                <button class="close-notification" onclick="dismissNotification('dryingAlert')">❌</button>
+            </div>
+        </div>
+
+        <div class="toast-notification" id="apiError">
+            ⚠️ System offline
+        </div>
+    </div>
+
+    <script>
+        // Timer functionality
+        let timerInterval;
+        let seconds = 0;
+        const timerDisplay = document.getElementById('timer');
+        const startTimerBtn = document.getElementById('startTimer');
+
+        function updateTimer() {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            timerDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        startTimerBtn.addEventListener('click', () => {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    updateTimer();
+                    if (seconds === 24 * 3600) {
+                        document.getElementById('dryingAlert').classList.add('show');
+                    }
+                }, 1000);
+                startTimerBtn.textContent = 'Pause Timer';
+            } else {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                startTimerBtn.textContent = 'Start Timer';
+            }
+        });
+
+        // Manual control functionality
+        document.getElementById('extendCover').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'up' })
+                });
+                if (response.ok) {
+                    document.getElementById('coverState').textContent = 'Extended';
+                }
+            } catch (error) {
+                console.error('Error extending cover:', error);
+            }
+        });
+
+        document.getElementById('retractCover').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'down' })
+                });
+                if (response.ok) {
+                    document.getElementById('coverState').textContent = 'Retracted';
+                }
+            } catch (error) {
+                console.error('Error retracting cover:', error);
+            }
+        });
+
+        function updateWeatherSymbol(condition) {
+            const weatherSymbol = document.getElementById('weatherSymbol');
+            const symbols = {
+                'sunny': '☀️',
+                'cloudy': '☁️',
+                'rainy': '☔️',
+                'snowy': '❄️',
+                'partly-cloudy': '⛅️'
+            };
+            weatherSymbol.textContent = symbols[condition] || '☀️';
+        }
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                document.getElementById('coverState').textContent = data.coverExtended ? 'Extended' : 'Retracted';
+                document.getElementById('sunlight').textContent = `${data.sunlight} lux`;
+                document.getElementById('rainStatus').textContent = data.rainDetected ? 'Rain Detected' : 'No Rain';
+                
+                updateWeatherSymbol(data.weatherCondition);
+                
+                const weatherAlert = document.getElementById('weatherAlert');
+                if (data.rainExpected) {
+                    weatherAlert.textContent = `Rain expected in ${data.rainHours} hours ☔️`;
+                } else {
+                    weatherAlert.textContent = 'No rain expected in the next 12 hours ☀️';
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        setInterval(updateStatus, 5000);
+        updateStatus();
+
+        document.getElementById('resetTimer').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            seconds = 0;
+            updateTimer();
+            startTimerBtn.textContent = 'Start Timer';
+            document.getElementById('dryingAlert').classList.remove('show');
+        });
+
+        function dismissNotification(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function showApiError(message) {
+            const toast = document.getElementById('apiError');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 5000);
+        }
+
+        document.getElementById('emergencyCover').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'manualClose' })
+                });
+                if (response.ok) {
+                    document.getElementById('coverState').textContent = 'Extended';
+                } else {
+                    showApiError('⚠️ Manual close activation failed');
+                }
+            } catch (error) {
+                showApiError('⚠️ System offline');
+            }
+        });
+
+        setTimeout(() => {
+            dismissNotification('dryingAlert');
+        }, 5000);
+    </script>
+</body>
+</html> 
