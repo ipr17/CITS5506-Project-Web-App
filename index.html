@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothes Rack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Smart Clothes Rack Dashboard</h1>
+
+        <div class="section">
+            <h2>📸 Live Camera Feed</h2>
+            <video class="camera-feed" autoplay muted loop>
+                <source src="/video_feed" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="section">
+            <h2>📊 Current Status</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <h3>Cover State</h3>
+                    <p id="coverState">Extended</p>
+                </div>
+                <div class="status-item">
+                    <h3>Sunlight</h3>
+                    <p id="sunlight">-- lux</p>
+                </div>
+                <div class="status-item">
+                    <h3>Rain Detection</h3>
+                    <p id="rainStatus">No Rain</p>
+                </div>
+                <div class="status-item">
+                    <h3>Weather</h3>
+                    <div class="weather-symbol" id="weatherSymbol">☀️</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⏲️ Drying Timer</h2>
+            <div class="timer-container">
+                <div class="timer-grid">
+                    <button class="button" id="extendCover">Extend Cover</button>
+                    <button class="button" id="retractCover">Retract Cover</button>
+                    <button class="button" id="startTimer">Start Timer</button>
+                    <button class="reset-timer" id="resetTimer">Reset</button>
+                </div>
+                <div class="timer-display" id="timer">00:00:00</div>
+                <button class="emergency-button" id="emergencyCover">
+                    🛑 Manual Close
+                </button>
+            </div>
+        </div>
+
+        <div class="notifications-bar">
+            <h2>🔔 Notifications</h2>
+            <div class="weather-alert" id="weatherAlert">
+                No rain expected in the next 12 hours ☀️
+            </div>
+            <div class="notification" id="dryingAlert">
+                Clothes have been drying for over 24 hours!
+                <button class="close-notification" onclick="dismissNotification('dryingAlert')">❌</button>
+            </div>
+        </div>
+
+        <div class="toast-notification" id="apiError">
+            ⚠️ System offline
+        </div>
+    </div>
+    <script src="js/main.js"></script>
+
+
+</body>
+</html> 
