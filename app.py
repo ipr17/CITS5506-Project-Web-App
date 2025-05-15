@@ -72,7 +72,6 @@ def rain_expected_next_12h(data):
             return True, offset  # offset hours from now
     return False, None
 
-
 def weathercode_to_symbol(wmo_code):
     # WMO code reference: https://open-meteo.com/en/docs#api_form
     if wmo_code == 0:
@@ -121,13 +120,11 @@ def api_status():
 
     current_above_300 = sunlight > 300
     
-    if (current_above_300 and was_above_300 is not True) or (rain_detected and not was_raining) and not manual_mode:
-        print("Condition(s) met")
+    if ((current_above_300 and was_above_300 is not True) or (rain_detected and not was_raining)) and not manual_mode:
         motor_clockwise()
         cover_extended = True
 
-    elif (not current_above_300 and was_above_300 is True) or (not rain_detected and was_raining) and not manual_mode:
-        print("Condition(s) not met")
+    elif ((not current_above_300 and was_above_300 is True) or (not rain_detected and was_raining)) and not manual_mode:
         motor_anticlockwise()
         cover_extended = False
 
@@ -145,19 +142,26 @@ def api_status():
 
 @app.route('/api/control', methods=['POST'])
 def api_control():
-    global cover_extended, manual_mode
+    global cover_extended
     command = request.json.get('command')
-    print("command", command)
     if command == 'up' and not cover_extended:
         cover_extended = True
         motor_clockwise()
     elif command == 'down' and cover_extended:
         cover_extended = False
         motor_anticlockwise()
-    elif command == 'manualClose':
-        manual_mode = not manual_mode
-        print(manual_mode)
     return jsonify({"success": True})
+
+@app.route('/api/set_mode', methods=['POST'])
+def set_mode():
+    global manual_mode
+    data = request.get_json()
+    mode = data.get('mode')
+    if mode == 'manual':
+        manual_mode = True
+    elif mode == 'auto':
+        manual_mode = False
+    return jsonify({"success": True, "manualMode": manual_mode})
 
 @app.route('/video_feed')
 def video_feed():

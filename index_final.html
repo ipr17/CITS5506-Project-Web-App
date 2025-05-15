@@ -672,7 +672,7 @@
                 </div>
                 <div class="timer-display" id="timer">00:00:00</div>
                 <button class="emergency-button" id="emergencyCover">
-                    🛑 Manual Close
+                    🛑 Manual Mode
                 </button>
             </div>
         </div>
@@ -830,21 +830,25 @@
 
         // Emergency button functionality
         document.getElementById('emergencyCover').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/api/control', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: 'manualClose' })
-                });
-                if (response.ok) {
-                    document.getElementById('coverState').textContent = 'Extended';
-                } else {
-                    showApiError('⚠️ Manual close activation failed');
-                }
-            } catch (error) {
-                showApiError('⚠️ System offline');
-            }
+        // Determine the current mode from the button text or a JS variable
+        const btn = document.getElementById('emergencyCover');
+        const isManual = btn.textContent.includes('Manual');
+        const newMode = isManual ? 'manual' : 'auto';
+
+        try {
+            const response = await fetch('/api/set_mode', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode: newMode })
+            });
+            const data = await response.json();
+            // Update button text based on the new mode
+            btn.textContent = data.manualMode ? "🔄 Automatic Mode" : "🛑 Manual Mode";
+        } catch (error) {
+            showApiError('⚠️ System offline');
+        }
         });
+
 
         // Auto-hide drying alert after 5 seconds
         setTimeout(() => {
