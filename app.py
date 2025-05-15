@@ -2,14 +2,18 @@ from flask import Flask, jsonify, request, Response, render_template
 import RPi.GPIO as GPIO
 from datetime import datetime
 from projectcode import call, motor_clockwise, motor_anticlockwise, cleanup
-import atexit
 import requests
 import threading 
 import time
-
-# atexit.register(cleanup)
+from picamera2 import Picamera2
+import cv2
 
 app = Flask(__name__)
+
+picam2 = Picamera2()
+picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
+picam2.set_controls({"AwbEnable": True, "AwbMode": 0})
+picam2.start()
 
 # Perth, Australia coordinates
 LATITUDE = -31.952
@@ -23,10 +27,21 @@ LONGITUDE = 115.857
 was_raining = False
 was_above_300 = None
 cover_extended = False
+manual_mode = False
 
 rain_expected = False
 rain_hours = 0
 weather_condition = None
+
+def gen_frames():
+    while True:
+        frame = picam2.capture_array()
+        ret, buffer = cv2.imencode('.jpg', frame)
+        if not ret:
+            continue
+        # Yield frame as byte string for MJPEG
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
 def weather_updater():
     global rain_expected, rain_hours, weather_condition
@@ -106,12 +121,12 @@ def api_status():
 
     current_above_300 = sunlight > 300
     
-    if (current_above_300 and was_above_300 is not True) or (rain_detected and not was_raining):
+    if (current_above_300 and was_above_300 is not True) or (rain_detected and not was_raining) and not manual_mode:
         print("Condition(s) met")
         motor_clockwise()
         cover_extended = True
 
-    elif (not current_above_300 and was_above_300 is True) or (not rain_detected and was_raining):
+    elif (not current_above_300 and was_above_300 is True) or (not rain_detected and was_raining) and not manual_mode:
         print("Condition(s) not met")
         motor_anticlockwise()
         cover_extended = False
@@ -130,23 +145,23 @@ def api_status():
 
 @app.route('/api/control', methods=['POST'])
 def api_control():
-    global cover_extended
+    global cover_extended, manual_mode
     command = request.json.get('command')
     print("command", command)
     if command == 'up' and not cover_extended:
         cover_extended = True
         motor_clockwise()
-    if command == 'down' and cover_extended:
+    elif command == 'down' and cover_extended:
         cover_extended = False
         motor_anticlockwise()
-    if command == 'manualClose':
-        # cleanup()
-        pass
+    elif command == 'manualClose':
+        manual_mode = not manual_mode
+        print(manual_mode)
     return jsonify({"success": True})
 
 @app.route('/video_feed')
 def video_feed():
-    return "Video feed not implemented yet", 501
+    return Response(gen_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     updater_thread = threading.Thread(target=weather_updater, daemon=True)
